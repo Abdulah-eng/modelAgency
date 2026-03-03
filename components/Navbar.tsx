@@ -2,11 +2,38 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import { Search, User, LogIn } from 'lucide-react';
+import { Search, User, LogIn, LogOut } from 'lucide-react';
+import { createClient } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar({ siteName, phoneNumber, logoUrl }: { siteName?: string; phoneNumber?: string; logoUrl?: string }) {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [user, setUser] = useState<any>(null);
+    const supabase = createClient();
+    const router = useRouter();
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user || null);
+        };
+        checkUser();
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user || null);
+        });
+
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
+    }, [supabase]);
+
+    const handleSignOut = async () => {
+        await supabase.auth.signOut();
+        router.push('/');
+        router.refresh();
+    };
 
     return (
         <>
@@ -38,9 +65,17 @@ export default function Navbar({ siteName, phoneNumber, logoUrl }: { siteName?: 
 
                 {/* Actions */}
                 <div className="navbar-actions">
-                    <button className="navbar-icon-btn" aria-label="Login">
-                        <LogIn size={18} />
-                    </button>
+                    {user ? (
+                        <>
+                            <button className="navbar-icon-btn" onClick={handleSignOut} title="Sign Out">
+                                <LogOut size={18} />
+                            </button>
+                        </>
+                    ) : (
+                        <Link href="/auth/login" className="navbar-icon-btn" title="Login">
+                            <LogIn size={18} />
+                        </Link>
+                    )}
                     <button className="navbar-icon-btn" aria-label="Profile">
                         <User size={18} />
                     </button>

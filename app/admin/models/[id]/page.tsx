@@ -38,12 +38,9 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
     const [category, setCategory] = useState('Fashion');
     const [bio, setBio] = useState('');
     const [isFeatured, setIsFeatured] = useState(false);
-    const [contactEmail, setContactEmail] = useState('');
     const [skills, setSkills] = useState<{ label: string; percent: number }[]>([]);
     const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
-    const [instagram, setInstagram] = useState('');
     const [telegram, setTelegram] = useState('');
-    const [whatsapp, setWhatsapp] = useState('');
     const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -65,12 +62,9 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                 setWaist(md.waist || ''); setHips(md.hips || '');
                 setShoeSize(md.shoe_size || ''); setCategory(md.category);
                 setBio(md.bio || ''); setIsFeatured(md.is_featured);
-                setContactEmail(md.contact_model_email || '');
                 setSkills(Array.isArray(md.skills) ? md.skills : []);
                 setCoverPhotoUrl(md.cover_photo || '');
-                setInstagram(md.instagram_link || '');
                 setTelegram(md.telegram_link || '');
-                setWhatsapp(md.whatsapp_number || '');
             }
             const photoUrls = (p as ModelPhoto[])?.map(ph => ph.url) || [];
             setGalleryUrls(photoUrls);
@@ -91,12 +85,9 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                     eyes_color: eyesColor, hair_color: hairColor,
                     dress_size: dressSize, bust, waist, hips, shoe_size: shoeSize,
                     category, bio, is_featured: isFeatured,
-                    contact_model_email: contactEmail,
                     skills: skills.filter(s => s.label.trim()),
                     cover_photo: coverPhotoUrl,
-                    instagram_link: instagram,
                     telegram_link: telegram,
-                    whatsapp_number: whatsapp,
                     gallery: galleryUrls,
                 }),
             });
@@ -139,9 +130,7 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Category</label>
-                                    <select className="form-select" value={category} onChange={e => setCategory(e.target.value)}>
-                                        {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                                    </select>
+                                    <input className="form-input" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Petite, Runway" required />
                                 </div>
                             </div>
                             <div className="form-group">
@@ -149,8 +138,8 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                                 <textarea className="form-textarea" value={bio} onChange={e => setBio(e.target.value)} rows={3} />
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Contact Email (for "Contact Model" form)</label>
-                                <input type="email" className="form-input" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="model@example.com" />
+                                <label className="form-label">Contact Telegram *</label>
+                                <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/username" required />
                             </div>
                             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                 <input type="checkbox" id="featured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
@@ -158,22 +147,6 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                             </div>
                         </div>
 
-                        {/* Social Links */}
-                        <div className="admin-card">
-                            <h3 className="admin-card-title">Social Links</h3>
-                            <div className="form-group">
-                                <label className="form-label">Instagram Profile URL</label>
-                                <input type="url" className="form-input" value={instagram} onChange={e => setInstagram(e.target.value)} placeholder="https://instagram.com/username" />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Telegram Username</label>
-                                <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="@username" />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">WhatsApp Number</label>
-                                <input type="tel" className="form-input" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+1234567890" />
-                            </div>
-                        </div>
 
                         {/* Measurements */}
                         <div className="admin-card">

@@ -14,9 +14,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             .from('models')
             .update({
                 ...modelData,
-                instagram_link: body.instagram_link,
                 telegram_link: body.telegram_link,
-                whatsapp_number: body.whatsapp_number,
             })
             .eq('id', params.id)
             .select()

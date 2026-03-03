@@ -209,4 +209,32 @@ create policy "Authenticated users can delete model_enquiries"
   on model_enquiries for delete using (auth.role() = 'authenticated');
 
 
+-- ── Model reviews (Ratings + Comments)
+create table if not exists model_reviews (
+  id          uuid primary key default gen_random_uuid(),
+  model_id    uuid not null references models(id) on delete cascade,
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  rating      int  not null check (rating >= 1 and rating <= 5),
+  comment     text,
+  created_at  timestamptz not null default now(),
+  unique(model_id, user_id) -- One review per user per model
+);
+
+create index if not exists model_reviews_model_id_idx on model_reviews(model_id);
+
+alter table model_reviews enable row level security;
+
+create policy "Public can read model_reviews"
+  on model_reviews for select using (true);
+
+create policy "Authenticated users can insert model_reviews"
+  on model_reviews for insert with check (auth.uid() = user_id);
+
+create policy "Users can update their own reviews"
+  on model_reviews for update using (auth.uid() = user_id);
+
+create policy "Users can delete their own reviews"
+  on model_reviews for delete using (auth.uid() = user_id);
+
+
 

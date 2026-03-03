@@ -6,6 +6,7 @@ import ContactButton from '@/components/ContactButton';
 import ModelGallery from '@/components/ModelGallery';
 import ModelSocialContact from '@/components/ModelSocialContact';
 import AutoScrollRow from '@/components/AutoScrollRow';
+import ModelReviews from '@/components/ModelReviews';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,15 +25,22 @@ async function getModelData(slug: string) {
     ]);
     if (!model) return null;
 
-    const [{ data: photos }, { data: otherModels }] = await Promise.all([
+    const [{ data: photos }, { data: otherModels }, { data: reviewStats }] = await Promise.all([
         supabase.from('model_photos').select('*').eq('model_id', model.id).order('sort_order', { ascending: true }),
         supabase.from('models').select('*').neq('id', model.id).limit(10),
+        supabase.from('model_reviews').select('rating').eq('model_id', model.id),
     ]);
+
+    const avgRating = reviewStats && reviewStats.length > 0
+        ? (reviewStats.reduce((acc, r) => acc + r.rating, 0) / reviewStats.length).toFixed(1)
+        : null;
+
     return {
         model: model as Model,
         photos: (photos as ModelPhoto[]) || [],
         settings: settings as SiteSettings | null,
         otherModels: (otherModels as Model[]) || [],
+        avgRating,
     };
 }
 
@@ -55,7 +63,7 @@ export default async function ModelPage({ params }: Props) {
     const result = await getModelData(params.slug);
     if (!result) notFound();
 
-    const { model, photos, settings, otherModels } = result;
+    const { model, photos, settings, otherModels, avgRating } = result;
     const skills: { label: string; percent: number }[] = Array.isArray(model.skills) ? model.skills : [];
 
     const statRows = [
@@ -88,6 +96,7 @@ export default async function ModelPage({ params }: Props) {
                 name={model.name}
                 category={model.category}
                 bannerImage={settings?.model_banner_image}
+                rating={avgRating}
             />
 
             {/* ── HERO: photo left | bio + skill bars right ── */}
@@ -156,18 +165,18 @@ export default async function ModelPage({ params }: Props) {
                     )}
                 </div>
 
-                {/* Social Contact Section (Replaced Form) */}
+                {/* Contact section - Telegram only */}
                 <ModelSocialContact
                     name={model.name}
-                    instagram={model.instagram_link}
                     telegram={model.telegram_link}
-                    whatsapp={model.whatsapp_number}
-                    contactEmail={model.contact_model_email || settings?.contact_email}
                 />
             </section>
 
             {/* ── FULL PHOTO ALBUM ── */}
             {photos.length > 0 && <PhotoAlbum photos={photos} />}
+
+            {/* ── REVIEWS ── */}
+            <ModelReviews modelId={model.id} modelName={model.name} />
 
             {/* ── OTHER MODELS ── */}
             {otherModels.length > 0 && (

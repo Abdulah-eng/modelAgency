@@ -20,9 +20,7 @@ export async function POST(req: NextRequest) {
             .insert([
                 {
                     ...modelData,
-                    instagram_link: body.instagram_link,
                     telegram_link: body.telegram_link,
-                    whatsapp_number: body.whatsapp_number,
                 },
             ])
             .select()

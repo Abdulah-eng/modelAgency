@@ -75,22 +75,6 @@ export default async function HomePage() {
                 <TestimonialsSection testimonials={testimonials} />
             )}
 
-            {/* ── BECOME OUR MODEL ── */}
-            <BecomeModelSection
-                backgroundUrl={settings?.become_model_bg_url as string | undefined}
-                description={settings?.become_model_text as string | undefined}
-                telegramLink={settings?.telegram_link}
-            />
-
-            {/* ── CASTING / ABOUT ── */}
-            <CastingSection
-                castingImageUrl={settings?.casting_image_url as string | undefined}
-                castingText={settings?.casting_text as string | undefined}
-                managerName={settings?.casting_manager_name as string | undefined}
-                managerRole={settings?.casting_manager_role as string | undefined}
-                telegramLink={settings?.telegram_link}
-            />
-
             {/* ── CONTACT FORM ── */}
             <ContactFormSection
                 siteName={settings?.site_name}

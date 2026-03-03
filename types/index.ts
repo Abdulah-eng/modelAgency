@@ -19,9 +19,7 @@ export interface Model {
     is_featured: boolean;
     skills: { label: string; percent: number }[];
     contact_model_email: string;
-    instagram_link?: string;
     telegram_link?: string;
-    whatsapp_number?: string;
     created_at: string;
 }
 
@@ -35,6 +33,18 @@ export interface Enquiry {
     message: string;
     enquiry_type: 'general' | 'model';
     created_at: string;
+}
+
+export interface Review {
+    id: string;
+    model_id: string;
+    user_id: string;
+    rating: number;
+    comment: string | null;
+    created_at: string;
+    profiles?: {
+        email: string;
+    };
 }
 
 export interface ModelPhoto {

@@ -25,14 +25,6 @@ export default function AdminSettingsPage() {
     const [heroImageUrl, setHeroImageUrl] = useState('');
     // Model banner
     const [modelBannerUrl, setModelBannerUrl] = useState('');
-    // Become Our Model section
-    const [becomeBgUrl, setBecomeBgUrl] = useState('');
-    const [becomeText, setBecomeText] = useState('');
-    // Casting section
-    const [castingImageUrl, setCastingImageUrl] = useState('');
-    const [castingText, setCastingText] = useState('');
-    const [castingManager, setCastingManager] = useState('');
-    const [castingManagerRole, setCastingManagerRole] = useState('');
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
@@ -56,12 +48,6 @@ export default function AdminSettingsPage() {
                 setHeroVideoSubtitle(data.hero_video_subtitle || '');
                 setHeroImageUrl(data.hero_image || '');
                 setModelBannerUrl(data.model_banner_image || '');
-                setBecomeBgUrl(data.become_model_bg_url || '');
-                setBecomeText(data.become_model_text || '');
-                setCastingImageUrl(data.casting_image_url || '');
-                setCastingText(data.casting_text || '');
-                setCastingManager(data.casting_manager_name || '');
-                setCastingManagerRole(data.casting_manager_role || '');
                 setSiteLogo(data.site_logo || '');
                 setSiteFavicon(data.site_favicon || '');
             })
@@ -92,12 +78,6 @@ export default function AdminSettingsPage() {
                 hero_video_subtitle: heroVideoSubtitle,
                 hero_image: heroImageUrl,
                 model_banner_image: modelBannerUrl,
-                become_model_bg_url: becomeBgUrl,
-                become_model_text: becomeText,
-                casting_image_url: castingImageUrl,
-                casting_text: castingText,
-                casting_manager_name: castingManager,
-                casting_manager_role: castingManagerRole,
                 site_logo: siteLogo,
                 site_favicon: siteFavicon,
             };
@@ -284,56 +264,6 @@ export default function AdminSettingsPage() {
                         />
                     </div>
 
-                    {/* ── Become Our Model ── */}
-                    <div className="admin-card">
-                        <h3 className="admin-card-title">Become Our Model Section</h3>
-                        <div className="form-group">
-                            <label className="form-label">Background Image</label>
-                            <UploadBox
-                                label="Click to upload background image"
-                                hint="Full-width, dark/pink toned"
-                                folder="become-bg"
-                                previewUrl={becomeBgUrl}
-                                onUrl={setBecomeBgUrl}
-                                aspect="16/6"
-                            />
-                        </div>
-                        <div className="form-group" style={{ marginTop: '0.75rem' }}>
-                            <label className="form-label">Description Text</label>
-                            <textarea className="form-textarea" value={becomeText} onChange={e => setBecomeText(e.target.value)} rows={3}
-                                placeholder="If you are 5ft 8in and above…" />
-                        </div>
-                    </div>
-
-                    {/* ── Casting Section ── */}
-                    <div className="admin-card">
-                        <h3 className="admin-card-title">Casting Section</h3>
-                        <div className="form-group">
-                            <label className="form-label">Casting Photo</label>
-                            <UploadBox
-                                label="Click to upload casting photo"
-                                hint="Portrait, dark toned"
-                                folder="casting"
-                                previewUrl={castingImageUrl}
-                                onUrl={setCastingImageUrl}
-                                aspect="3/4"
-                            />
-                        </div>
-                        <div className="form-group" style={{ marginTop: '0.75rem' }}>
-                            <label className="form-label">Casting Body Text</label>
-                            <textarea className="form-textarea" value={castingText} onChange={e => setCastingText(e.target.value)} rows={3} />
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                            <div className="form-group">
-                                <label className="form-label">Manager Name</label>
-                                <input className="form-input" value={castingManager} onChange={e => setCastingManager(e.target.value)} placeholder="Rebecca Smith" />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Manager Role</label>
-                                <input className="form-input" value={castingManagerRole} onChange={e => setCastingManagerRole(e.target.value)} placeholder="Casting Manager" />
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div style={{ marginTop: '1.5rem' }}>
