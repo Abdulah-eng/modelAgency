@@ -5,21 +5,21 @@ export interface Model {
     age: number;
     height: string;
     weight: string;
-    measurements: string;
-    eyes_color: string;
-    hair_color: string;
-    dress_size: string;
-    bust: string;
-    waist: string;
-    hips: string;
-    shoe_size: string;
-    category: string;
+    category: string[];
     bio: string;
     cover_photo: string;
     is_featured: boolean;
     skills: { label: string; percent: number }[];
     contact_model_email: string;
     telegram_link?: string;
+    // New measurement fields
+    eyes_color?: string;
+    hair_color?: string;
+    dress_size?: string;
+    bust?: string;
+    waist?: string;
+    hips?: string;
+    shoe_size?: string;
     created_at: string;
 }
 
@@ -41,6 +41,7 @@ export interface Review {
     user_id: string;
     rating: number;
     comment: string | null;
+    screenshots?: string[]; // New
     created_at: string;
     profiles?: {
         email: string;
@@ -83,5 +84,7 @@ export interface SiteSettings {
     casting_manager_role: string;
     site_logo: string;
     site_favicon: string;
+    whatsapp_link: string;
+    viber_link: string;
     updated_at: string;
 }

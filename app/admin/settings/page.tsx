@@ -25,6 +25,9 @@ export default function AdminSettingsPage() {
     const [heroImageUrl, setHeroImageUrl] = useState('');
     // Model banner
     const [modelBannerUrl, setModelBannerUrl] = useState('');
+    // Global Social Links
+    const [viberLink, setViberLink] = useState('');
+    const [whatsappLink, setWhatsappLink] = useState('');
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
@@ -50,6 +53,8 @@ export default function AdminSettingsPage() {
                 setModelBannerUrl(data.model_banner_image || '');
                 setSiteLogo(data.site_logo || '');
                 setSiteFavicon(data.site_favicon || '');
+                setWhatsappLink(data.whatsapp_link || '');
+                setViberLink(data.viber_link || '');
             })
             .catch(() => toast.error('Failed to load settings'))
             .finally(() => setFetching(false));
@@ -80,6 +85,8 @@ export default function AdminSettingsPage() {
                 model_banner_image: modelBannerUrl,
                 site_logo: siteLogo,
                 site_favicon: siteFavicon,
+                whatsapp_link: whatsappLink,
+                viber_link: viberLink,
             };
 
             let res: Response;
@@ -194,6 +201,16 @@ export default function AdminSettingsPage() {
                         <div className="form-group">
                             <label className="form-label">Contact Address</label>
                             <textarea className="form-textarea" value={contactAddress} onChange={e => setContactAddress(e.target.value)} rows={2} placeholder="316 Tipple Road&#10;Philadelphia, PA 19143" />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="form-group">
+                                <label className="form-label">WhatsApp Number / Link</label>
+                                <input className="form-input" value={whatsappLink} onChange={e => setWhatsappLink(e.target.value)} placeholder="+1234567890" />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Viber Number / Link</label>
+                                <input className="form-input" value={viberLink} onChange={e => setViberLink(e.target.value)} placeholder="+1234567890" />
+                            </div>
                         </div>
                     </div>
 

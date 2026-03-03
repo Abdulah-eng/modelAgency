@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { model_id, rating, comment } = await req.json();
+        const { model_id, rating, comment, screenshots } = await req.json();
 
         // Validation
         if (!model_id) return NextResponse.json({ error: 'Model ID is required.' }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
                     user_id: session.user.id,
                     rating,
                     comment,
+                    screenshots: Array.isArray(screenshots) ? screenshots : [],
                 },
             ])
             .select()

@@ -216,6 +216,7 @@ create table if not exists model_reviews (
   user_id     uuid not null references auth.users(id) on delete cascade,
   rating      int  not null check (rating >= 1 and rating <= 5),
   comment     text,
+  screenshots text[] default '{}'::text[],
   created_at  timestamptz not null default now(),
   unique(model_id, user_id) -- One review per user per model
 );
@@ -237,4 +238,103 @@ create policy "Users can delete their own reviews"
   on model_reviews for delete using (auth.uid() = user_id);
 
 
+-- ── 6. UTILITY FUNCTIONS ──────────────────────────────────────
+-- This function allows running arbitrary SQL via RPC (used for migrations)
+-- Requires SERVICE_ROLE key or superuser permissions
+create or replace function exec_sql(sql text)
+returns void as $$
+begin
+  execute sql;
+end;
+$$ language plpgsql security definer;
 
+
+-- ============================================================
+-- ── MIGRATION: Enhancements UPDATE (Cumulative)
+-- Run this section if you already have an existing database
+-- ============================================================
+
+-- Site settings: Add missing columns
+alter table site_settings add column if not exists phone_number          text;
+alter table site_settings add column if not exists facebook_link         text;
+alter table site_settings add column if not exists twitter_link          text;
+alter table site_settings add column if not exists instagram_link        text;
+alter table site_settings add column if not exists model_banner_image    text;
+alter table site_settings add column if not exists hero_video_url        text;
+alter table site_settings add column if not exists hero_video_text       text;
+alter table site_settings add column if not exists hero_video_subtitle   text;
+alter table site_settings add column if not exists contact_email         text;
+alter table site_settings add column if not exists contact_address       text;
+alter table site_settings add column if not exists become_model_bg_url   text;
+alter table site_settings add column if not exists become_model_text     text;
+alter table site_settings add column if not exists casting_image_url     text;
+alter table site_settings add column if not exists casting_text          text;
+alter table site_settings add column if not exists casting_manager_name  text;
+alter table site_settings add column if not exists casting_manager_role  text;
+alter table site_settings add column if not exists site_logo             text;
+alter table site_settings add column if not exists site_favicon          text;
+alter table site_settings add column if not exists whatsapp_link          text;
+alter table site_settings add column if not exists viber_link             text;
+
+-- Support multiple categories per model
+do $$ 
+begin 
+  if (select data_type from information_schema.columns where table_name = 'models' and column_name = 'category') = 'text' then
+    alter table models alter column category type text[] using array[category];
+  end if;
+end $$;
+
+-- Add screenshots to reviews if not exists
+alter table model_reviews add column if not exists screenshots text[] default '{}'::text[];
+
+-- Create profiles table if not exists
+create table if not exists public.profiles (
+  id uuid references auth.users on delete cascade primary key,
+  email text not null,
+  created_at timestamptz default now()
+);
+
+-- Enable RLS on profiles
+alter table public.profiles enable row level security;
+
+-- Public read for profiles (so emails show in reviews)
+do $$
+begin
+  if not exists (select 1 from pg_policies where policyname = 'Public can read profiles') then
+    create policy "Public can read profiles" on public.profiles for select using (true);
+  end if;
+end $$;
+
+-- Trigger to sync auth.users to public.profiles
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'on_auth_user_created') then
+    create trigger on_auth_user_created
+      after insert on auth.users
+      for each row execute procedure public.handle_new_user();
+  end if;
+end $$;
+
+-- Sync existing users to profiles
+insert into public.profiles (id, email)
+select id, email from auth.users
+on conflict (id) do nothing;
+
+-- Ensure model_reviews.user_id has a relationship to profiles for joins
+do $$
+begin
+  if not exists (select 1 from information_schema.table_constraints where constraint_name = 'model_reviews_user_id_profiles_fkey') then
+    alter table public.model_reviews 
+    add constraint model_reviews_user_id_profiles_fkey 
+    foreign key (user_id) references public.profiles(id) on delete cascade;
+  end if;
+end $$;

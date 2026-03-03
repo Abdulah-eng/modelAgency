@@ -18,14 +18,6 @@ export default function NewModelPage() {
     const [age, setAge] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
-    const [measurements, setMeasurements] = useState('');
-    const [eyesColor, setEyesColor] = useState('');
-    const [hairColor, setHairColor] = useState('');
-    const [dressSize, setDressSize] = useState('');
-    const [bust, setBust] = useState('');
-    const [waist, setWaist] = useState('');
-    const [hips, setHips] = useState('');
-    const [shoeSize, setShoeSize] = useState('');
     const [category, setCategory] = useState('Fashion');
     const [bio, setBio] = useState('');
     const [isFeatured, setIsFeatured] = useState(false);
@@ -50,21 +42,25 @@ export default function NewModelPage() {
             let photoUrl = coverPhotoUrl;
             if (coverFile) photoUrl = await uploadViaApi(coverFile, 'covers');
 
-            const slug = slugify(name) + '-' + Date.now();
+            const payloads = {
+                name,
+                slug: name.toLowerCase().replace(/\s+/g, '-'),
+                age: parseInt(age),
+                height,
+                weight,
+                category: category.split(',').map(c => c.trim()).filter(Boolean),
+                bio,
+                is_featured: isFeatured,
+                skills: skills.filter(s => s.label.trim()),
+                cover_photo: photoUrl,
+                telegram_link: telegram,
+                gallery: galleryUrls,
+            };
+
             const res = await fetch('/api/admin/models', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name, slug, age: parseInt(age),
-                    height, weight, measurements,
-                    eyes_color: eyesColor, hair_color: hairColor,
-                    dress_size: dressSize, bust, waist, hips, shoe_size: shoeSize,
-                    category, bio, is_featured: isFeatured,
-                    skills: skills.filter(s => s.label.trim()),
-                    cover_photo: photoUrl,
-                    telegram_link: telegram,
-                    gallery: galleryUrls,
-                }),
+                body: JSON.stringify(payloads),
             });
             const json = await res.json();
             if (!res.ok || json.error) throw new Error(json.error);
@@ -96,23 +92,25 @@ export default function NewModelPage() {
                                 <label className="form-label">Full Name *</label>
                                 <input className="form-input" value={name} onChange={e => setName(e.target.value)} required />
                             </div>
+                            <div className="form-group">
+                                <label className="form-label">Category (multiple? comma-separated)</label>
+                                <input className="form-input" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Fashion, Petite, Commercial" required />
+                            </div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                 <div className="form-group">
                                     <label className="form-label">Age *</label>
                                     <input type="number" className="form-input" value={age} onChange={e => setAge(e.target.value)} required min="16" />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Category *</label>
-                                    <input className="form-input" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Petite, Runway" required />
                                 </div>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Bio</label>
                                 <textarea className="form-textarea" value={bio} onChange={e => setBio(e.target.value)} rows={3} />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Contact Telegram *</label>
-                                <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/username" required />
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <label className="form-label">Telegram Link</label>
+                                    <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/…" />
+                                </div>
                             </div>
                             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                 <input type="checkbox" id="featured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
@@ -120,27 +118,18 @@ export default function NewModelPage() {
                             </div>
                         </div>
 
-                        {/* Measurements */}
+                        {/* Stats */}
                         <div className="admin-card">
-                            <h3 className="admin-card-title">Measurements</h3>
+                            <h3 className="admin-card-title">Stats</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                {[
-                                    { label: 'Height', val: height, set: setHeight, ph: 'e.g. 183 cm' },
-                                    { label: 'Weight', val: weight, set: setWeight, ph: 'e.g. 55 kg' },
-                                    { label: 'Eyes Color', val: eyesColor, set: setEyesColor, ph: 'e.g. Blue' },
-                                    { label: 'Hair Color', val: hairColor, set: setHairColor, ph: 'e.g. Brown' },
-                                    { label: 'Dress Size', val: dressSize, set: setDressSize, ph: 'e.g. 4' },
-                                    { label: 'Bust', val: bust, set: setBust, ph: 'e.g. 78 cm' },
-                                    { label: 'Waist', val: waist, set: setWaist, ph: 'e.g. 58 cm' },
-                                    { label: 'Hips', val: hips, set: setHips, ph: 'e.g. 86 cm' },
-                                    { label: 'Shoe Size', val: shoeSize, set: setShoeSize, ph: 'e.g. 7.5' },
-                                    { label: 'Measurements', val: measurements, set: setMeasurements, ph: '34-26-36' },
-                                ].map(({ label, val, set, ph }) => (
-                                    <div className="form-group" key={label}>
-                                        <label className="form-label">{label}</label>
-                                        <input className="form-input" value={val} onChange={e => set(e.target.value)} placeholder={ph} />
-                                    </div>
-                                ))}
+                                <div className="form-group">
+                                    <label className="form-label">Height</label>
+                                    <input className="form-input" value={height} onChange={e => setHeight(e.target.value)} placeholder="e.g. 183 cm" />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Weight</label>
+                                    <input className="form-input" value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 55 kg" />
+                                </div>
                             </div>
                         </div>
 

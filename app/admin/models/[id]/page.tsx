@@ -10,15 +10,18 @@ import { createClient } from '@/lib/supabase';
 import { UploadBox, uploadViaApi, MultiUploadBox } from '@/app/admin/AdminUpload';
 import type { ModelPhoto } from '@/types';
 
-const CATEGORIES = ['Fashion', 'Commercial', 'Runway', 'Editorial', 'Fitness', 'Plus Size', 'Petite', 'Other'];
-
 interface ModelRow {
-    id: string; name: string; age: number; height: string; weight: string;
-    measurements: string; eyes_color: string; hair_color: string;
-    dress_size: string; bust: string; waist: string; hips: string; shoe_size: string;
-    category: string; bio: string; is_featured: boolean; cover_photo: string;
-    contact_model_email: string; skills: { label: string; percent: number }[];
-    instagram_link?: string; telegram_link?: string; whatsapp_number?: string;
+    id: string;
+    name: string;
+    age: number;
+    height: string;
+    weight: string;
+    category: string[];
+    bio: string;
+    is_featured: boolean;
+    cover_photo: string;
+    skills: { label: string; percent: number }[];
+    telegram_link?: string;
 }
 
 export default function EditModelPage({ params }: { params: { id: string } }) {
@@ -27,14 +30,6 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
     const [age, setAge] = useState('');
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
-    const [measurements, setMeasurements] = useState('');
-    const [eyesColor, setEyesColor] = useState('');
-    const [hairColor, setHairColor] = useState('');
-    const [dressSize, setDressSize] = useState('');
-    const [bust, setBust] = useState('');
-    const [waist, setWaist] = useState('');
-    const [hips, setHips] = useState('');
-    const [shoeSize, setShoeSize] = useState('');
     const [category, setCategory] = useState('Fashion');
     const [bio, setBio] = useState('');
     const [isFeatured, setIsFeatured] = useState(false);
@@ -56,11 +51,8 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                 const md = m as ModelRow;
                 setModel(md);
                 setName(md.name); setAge(String(md.age)); setHeight(md.height || '');
-                setWeight(md.weight || ''); setMeasurements(md.measurements || '');
-                setEyesColor(md.eyes_color || ''); setHairColor(md.hair_color || '');
-                setDressSize(md.dress_size || ''); setBust(md.bust || '');
-                setWaist(md.waist || ''); setHips(md.hips || '');
-                setShoeSize(md.shoe_size || ''); setCategory(md.category);
+                setWeight(md.weight || '');
+                setCategory(Array.isArray(md.category) ? md.category.join(', ') : (md.category || ''));
                 setBio(md.bio || ''); setIsFeatured(md.is_featured);
                 setSkills(Array.isArray(md.skills) ? md.skills : []);
                 setCoverPhotoUrl(md.cover_photo || '');
@@ -81,10 +73,9 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name, age: parseInt(age), height, weight, measurements,
-                    eyes_color: eyesColor, hair_color: hairColor,
-                    dress_size: dressSize, bust, waist, hips, shoe_size: shoeSize,
-                    category, bio, is_featured: isFeatured,
+                    name, age: parseInt(age), height, weight,
+                    category: category.split(',').map(c => c.trim()).filter(Boolean),
+                    bio, is_featured: isFeatured,
                     skills: skills.filter(s => s.label.trim()),
                     cover_photo: coverPhotoUrl,
                     telegram_link: telegram,
@@ -129,17 +120,19 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                                     <input type="number" className="form-input" value={age} onChange={e => setAge(e.target.value)} required />
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">Category</label>
-                                    <input className="form-input" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Petite, Runway" required />
+                                    <label className="form-label">Category (multiple? comma-separated)</label>
+                                    <input className="form-input" value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Fashion, Petite, Commercial" required />
                                 </div>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Bio</label>
                                 <textarea className="form-textarea" value={bio} onChange={e => setBio(e.target.value)} rows={3} />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Contact Telegram *</label>
-                                <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/username" required />
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <label className="form-label">Telegram Link</label>
+                                    <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/…" />
+                                </div>
                             </div>
                             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                 <input type="checkbox" id="featured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} style={{ width: 16, height: 16, accentColor: 'var(--accent)' }} />
@@ -147,28 +140,18 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                             </div>
                         </div>
 
-
-                        {/* Measurements */}
+                        {/* Stats */}
                         <div className="admin-card">
-                            <h3 className="admin-card-title">Measurements</h3>
+                            <h3 className="admin-card-title">Stats</h3>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                {[
-                                    { label: 'Height', val: height, set: setHeight },
-                                    { label: 'Weight', val: weight, set: setWeight },
-                                    { label: 'Eyes Color', val: eyesColor, set: setEyesColor },
-                                    { label: 'Hair Color', val: hairColor, set: setHairColor },
-                                    { label: 'Dress Size', val: dressSize, set: setDressSize },
-                                    { label: 'Bust', val: bust, set: setBust },
-                                    { label: 'Waist', val: waist, set: setWaist },
-                                    { label: 'Hips', val: hips, set: setHips },
-                                    { label: 'Shoe Size', val: shoeSize, set: setShoeSize },
-                                    { label: 'Measurements', val: measurements, set: setMeasurements },
-                                ].map(({ label, val, set }) => (
-                                    <div className="form-group" key={label}>
-                                        <label className="form-label">{label}</label>
-                                        <input className="form-input" value={val} onChange={e => set(e.target.value)} />
-                                    </div>
-                                ))}
+                                <div className="form-group">
+                                    <label className="form-label">Height</label>
+                                    <input className="form-input" value={height} onChange={e => setHeight(e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Weight</label>
+                                    <input className="form-input" value={weight} onChange={e => setWeight(e.target.value)} />
+                                </div>
                             </div>
                         </div>
 

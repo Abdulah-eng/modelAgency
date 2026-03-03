@@ -21,6 +21,68 @@ const MIGRATION_DDL = `
   alter table site_settings add column if not exists casting_manager_role  text;
   alter table site_settings add column if not exists site_logo             text;
   alter table site_settings add column if not exists site_favicon          text;
+  alter table site_settings add column if not exists whatsapp_link          text;
+  alter table site_settings add column if not exists viber_link             text;
+
+  -- Convert models.category to text array if it is still text
+  do $$ 
+  begin 
+    if (select data_type from information_schema.columns where table_name = 'models' and column_name = 'category') = 'text' then
+      alter table models alter column category type text[] using array[category];
+    end if;
+  end $$;
+
+  -- Create profiles table if not exists
+  create table if not exists public.profiles (
+    id uuid references auth.users on delete cascade primary key,
+    email text not null,
+    created_at timestamptz default now()
+  );
+
+  -- Enable RLS on profiles
+  alter table public.profiles enable row level security;
+
+  -- Public read for profiles (so emails show in reviews)
+  do $$
+  begin
+    if not exists (select 1 from pg_policies where policyname = 'Public can read profiles') then
+      create policy "Public can read profiles" on public.profiles for select using (true);
+    end if;
+  end $$;
+
+  -- Trigger to sync auth.users to public.profiles
+  create or replace function public.handle_new_user()
+  returns trigger as $$
+  begin
+    insert into public.profiles (id, email)
+    values (new.id, new.email);
+    return new;
+  end;
+  $$ language plpgsql security definer;
+
+  do $$
+  begin
+    if not exists (select 1 from pg_trigger where tgname = 'on_auth_user_created') then
+      create trigger on_auth_user_created
+        after insert on auth.users
+        for each row execute procedure public.handle_new_user();
+    end if;
+  end $$;
+
+  -- Sync existing users to profiles
+  insert into public.profiles (id, email)
+  select id, email from auth.users
+  on conflict (id) do nothing;
+
+  -- Ensure model_reviews.user_id has a relationship to profiles for joins
+  do $$
+  begin
+    if not exists (select 1 from information_schema.table_constraints where constraint_name = 'model_reviews_user_id_profiles_fkey') then
+      alter table public.model_reviews 
+      add constraint model_reviews_user_id_profiles_fkey 
+      foreign key (user_id) references public.profiles(id) on delete cascade;
+    end if;
+  end $$;
 `;
 
 async function ensureColumns(supabase: ReturnType<typeof createServiceRoleClient>) {
@@ -47,12 +109,26 @@ export async function GET() {
     }
     try {
         const supabase = createServiceRoleClient();
+        // Try to select all, but fallback to specific known columns if it fails due to missing migration
         const { data, error } = await supabase
             .from('site_settings')
             .select('*')
             .order('updated_at', { ascending: true })
             .limit(1)
             .maybeSingle();
+
+        if (error && error.message?.includes('column') && error.message?.includes('does not exist')) {
+            console.warn('[settings GET] Missing columns, falling back to basic set');
+            const { data: baseData, error: baseErr } = await supabase
+                .from('site_settings')
+                .select('id, site_name, about_text, telegram_link, updated_at')
+                .order('updated_at', { ascending: true })
+                .limit(1)
+                .maybeSingle();
+            if (baseErr) throw baseErr;
+            return NextResponse.json({ data: baseData });
+        }
+
         if (error) throw error;
         return NextResponse.json({ data });
     } catch (e: unknown) {

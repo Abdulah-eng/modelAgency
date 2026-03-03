@@ -5,10 +5,11 @@ export default function ModelBanner({
     rating,
 }: {
     name: string;
-    category: string;
+    category: string | string[];
     bannerImage?: string;
     rating?: string | number | null;
 }) {
+    const categoryText = Array.isArray(category) ? category.join(', ') : category;
     return (
         <div className="model-banner">
             {bannerImage ? (
@@ -31,7 +32,7 @@ export default function ModelBanner({
                     <span className="sep">/</span>
                     <a href="/#models">Our Models</a>
                     <span className="sep">/</span>
-                    <a href={`/#models`}>{category}</a>
+                    <a href={`/#models`}>{categoryText}</a>
                     <span className="sep">/</span>
                     <span className="current">{name}</span>
                 </nav>

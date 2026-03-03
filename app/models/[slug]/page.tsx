@@ -71,15 +71,6 @@ export default async function ModelPage({ params }: Props) {
             { label: 'Age', value: model.age },
             { label: 'Height', value: model.height },
             { label: 'Weight', value: model.weight },
-            { label: 'Eyes', value: model.eyes_color },
-            { label: 'Hair', value: model.hair_color },
-        ],
-        [
-            { label: 'Dress', value: model.dress_size },
-            { label: 'Bust', value: model.bust },
-            { label: 'Waist', value: model.waist },
-            { label: 'Hips', value: model.hips },
-            { label: 'Shoe', value: model.shoe_size },
         ],
     ];
 
@@ -115,7 +106,7 @@ export default async function ModelPage({ params }: Props) {
                     <div style={{ padding: '1rem 0 0' }}>
                         <Link href="/" className="back-btn">← Back</Link>
                     </div>
-                    <p className="mdp-category">{model.category}</p>
+                    <p className="mdp-category">{Array.isArray(model.category) ? model.category.join(' • ') : model.category}</p>
                     <h2 className="mdp-name">{model.name}</h2>
                     {model.bio && <p className="mdp-bio">{model.bio}</p>}
 
@@ -197,7 +188,11 @@ export default async function ModelPage({ params }: Props) {
                 logoUrl={settings?.site_logo}
             />
 
-            {settings?.telegram_link && <ContactButton link={settings.telegram_link} />}
+            {settings?.whatsapp_link || settings?.phone_number ? (
+                <ContactButton link={settings.whatsapp_link || settings.phone_number} />
+            ) : settings?.telegram_link ? (
+                <ContactButton link={settings.telegram_link} />
+            ) : null}
         </>
     );
 }

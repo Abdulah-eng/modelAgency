@@ -33,7 +33,9 @@ export default function ModelCard({ model }: { model: Model }) {
 
             {/* Always-visible name bar */}
             <div className="model-card-namebar">
-                <p className="model-card-cat">{model.category}</p>
+                <p className="model-card-cat">
+                    {Array.isArray(model.category) ? model.category.join(' • ') : model.category}
+                </p>
                 <p className="model-card-name">{model.name}</p>
             </div>
 

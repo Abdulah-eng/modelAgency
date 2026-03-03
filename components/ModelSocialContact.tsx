@@ -1,6 +1,6 @@
 'use client';
 
-import { Send } from 'lucide-react';
+import { Send, MessageCircle, Phone } from 'lucide-react';
 
 interface ModelSocialContactProps {
     telegram?: string;
@@ -15,7 +15,7 @@ export default function ModelSocialContact({ telegram, name }: ModelSocialContac
     return (
         <div className="model-social-panel">
             <h3 className="social-title">Contact {name.split(' ')[0]}</h3>
-            <p className="social-subtitle">Connect with this model directly via Telegram for bookings and inquiries.</p>
+            <p className="social-subtitle">Connect with this model directly for bookings and inquiries.</p>
 
             <div className="social-buttons-grid">
                 <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="social-btn telegram">
@@ -68,11 +68,25 @@ export default function ModelSocialContact({ telegram, name }: ModelSocialContac
                     background: rgba(0, 136, 204, 0.1);
                     color: #0088cc;
                 }
-                .social-btn:hover {
-                    background: #0088cc;
+                .social-btn.whatsapp {
+                    border-color: rgba(37, 211, 102, 0.3);
+                    background: rgba(37, 211, 102, 0.1);
+                    color: #25d366;
+                }
+                .social-btn.whatsapp:hover {
+                    background: #25d366;
                     color: white;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
+                    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+                }
+                .social-btn.viber {
+                    border-color: rgba(115, 74, 155, 0.3);
+                    background: rgba(115, 74, 155, 0.1);
+                    color: #734a9b;
+                }
+                .social-btn.viber:hover {
+                    background: #734a9b;
+                    color: white;
+                    box-shadow: 0 4px 12px rgba(115, 74, 155, 0.3);
                 }
 
                 @media (max-width: 1200px) {

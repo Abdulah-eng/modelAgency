@@ -50,7 +50,34 @@ export default async function HomePage() {
                     <p className="video-hero-subtitle">
                         {settings?.hero_video_subtitle || settings?.about_text?.slice(0, 120) || 'A curated selection of professional models for fashion, editorial, and commercial projects.'}
                     </p>
-                    <a href="#models" className="video-hero-cta">Browse Models</a>
+                    <div className="video-hero-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+                        <a href="#models" className="video-hero-cta">Browse Models</a>
+
+                        {settings?.telegram_link && (
+                            <a
+                                href={settings.telegram_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hero-telegram-btn"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.8rem 2rem',
+                                    background: 'rgba(0, 136, 204, 0.15)',
+                                    border: '1px solid #0088cc',
+                                    color: '#0088cc',
+                                    borderRadius: '30px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    transition: 'all 0.3s'
+                                }}
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+                                Subscribe to our telegram channel for updates
+                            </a>
+                        )}
+                    </div>
                 </div>
             </section>
 
@@ -82,6 +109,8 @@ export default async function HomePage() {
                 email={settings?.contact_email as string | undefined}
                 address={settings?.contact_address as string | undefined}
                 telegramLink={settings?.telegram_link}
+                whatsappLink={settings?.whatsapp_link}
+                viberLink={settings?.viber_link}
             />
 
             {/* ── FOOTER ── */}
@@ -93,7 +122,11 @@ export default async function HomePage() {
                 logoUrl={settings?.site_logo}
             />
 
-            {settings?.telegram_link && <ContactButton link={settings.telegram_link} />}
+            {settings?.whatsapp_link || settings?.phone_number ? (
+                <ContactButton link={settings.whatsapp_link || settings.phone_number} />
+            ) : settings?.telegram_link ? (
+                <ContactButton link={settings.telegram_link} />
+            ) : null}
         </>
     );
 }
