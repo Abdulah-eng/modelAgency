@@ -22,6 +22,8 @@ interface ModelRow {
     cover_photo: string;
     skills: { label: string; percent: number }[];
     telegram_link?: string;
+    whatsapp_link?: string;
+    viber_link?: string;
 }
 
 export default function EditModelPage({ params }: { params: { id: string } }) {
@@ -36,6 +38,8 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
     const [skills, setSkills] = useState<{ label: string; percent: number }[]>([]);
     const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
     const [telegram, setTelegram] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
+    const [viber, setViber] = useState('');
     const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -57,6 +61,8 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                 setSkills(Array.isArray(md.skills) ? md.skills : []);
                 setCoverPhotoUrl(md.cover_photo || '');
                 setTelegram(md.telegram_link || '');
+                setWhatsapp(md.whatsapp_link || '');
+                setViber(md.viber_link || '');
             }
             const photoUrls = (p as ModelPhoto[])?.map(ph => ph.url) || [];
             setGalleryUrls(photoUrls);
@@ -79,6 +85,8 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                     skills: skills.filter(s => s.label.trim()),
                     cover_photo: coverPhotoUrl,
                     telegram_link: telegram,
+                    whatsapp_link: whatsapp,
+                    viber_link: viber,
                     gallery: galleryUrls,
                 }),
             });
@@ -132,6 +140,16 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                                 <div className="form-group">
                                     <label className="form-label">Telegram Link</label>
                                     <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/…" />
+                                </div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <label className="form-label">WhatsApp Link / Number</label>
+                                    <input className="form-input" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="https://wa.me/…" />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Viber Link / Number</label>
+                                    <input className="form-input" value={viber} onChange={e => setViber(e.target.value)} placeholder="viber://chat?number=…" />
                                 </div>
                             </div>
                             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

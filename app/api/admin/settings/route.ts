@@ -21,8 +21,11 @@ const MIGRATION_DDL = `
   alter table site_settings add column if not exists casting_manager_role  text;
   alter table site_settings add column if not exists site_logo             text;
   alter table site_settings add column if not exists site_favicon          text;
-  alter table site_settings add column if not exists whatsapp_link          text;
   alter table site_settings add column if not exists viber_link             text;
+
+  -- Add columns to models table
+  alter table models add column if not exists whatsapp_link          text;
+  alter table models add column if not exists viber_link            text;
 
   -- Convert models.category to text array if it is still text
   do $$ 

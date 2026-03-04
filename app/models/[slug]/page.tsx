@@ -160,6 +160,8 @@ export default async function ModelPage({ params }: Props) {
                 <ModelSocialContact
                     name={model.name}
                     telegram={model.telegram_link}
+                    whatsapp={model.whatsapp_link}
+                    viber={model.viber_link}
                 />
             </section>
 

@@ -4,13 +4,17 @@ import { Send, MessageCircle, Phone } from 'lucide-react';
 
 interface ModelSocialContactProps {
     telegram?: string;
+    whatsapp?: string;
+    viber?: string;
     name: string;
 }
 
-export default function ModelSocialContact({ telegram, name }: ModelSocialContactProps) {
-    if (!telegram) return null;
+export default function ModelSocialContact({ telegram, whatsapp, viber, name }: ModelSocialContactProps) {
+    if (!telegram && !whatsapp && !viber) return null;
 
-    const telegramLink = telegram.startsWith('http') ? telegram : `https://t.me/${telegram.replace('@', '')}`;
+    const telegramLink = telegram ? (telegram.startsWith('http') ? telegram : `https://t.me/${telegram.replace('@', '')}`) : null;
+    const whatsappLink = whatsapp ? (whatsapp.startsWith('http') ? whatsapp : `https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`) : null;
+    const viberLink = viber ? (viber.startsWith('viber') || viber.startsWith('http') ? viber : `viber://chat?number=${viber.replace(/[^0-9]/g, '')}`) : null;
 
     return (
         <div className="model-social-panel">
@@ -18,9 +22,21 @@ export default function ModelSocialContact({ telegram, name }: ModelSocialContac
             <p className="social-subtitle">Connect with this model directly for bookings and inquiries.</p>
 
             <div className="social-buttons-grid">
-                <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="social-btn telegram">
-                    <Send size={18} /> Contact via Telegram
-                </a>
+                {telegramLink && (
+                    <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="social-btn telegram">
+                        <Send size={18} /> Contact via Telegram
+                    </a>
+                )}
+                {whatsappLink && (
+                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="social-btn whatsapp">
+                        <MessageCircle size={18} /> Message on WhatsApp
+                    </a>
+                )}
+                {viberLink && (
+                    <a href={viberLink} target="_blank" rel="noopener noreferrer" className="social-btn viber">
+                        <Phone size={18} /> Chat on Viber
+                    </a>
+                )}
             </div>
 
             <style jsx>{`

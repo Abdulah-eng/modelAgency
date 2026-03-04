@@ -20,6 +20,8 @@ export interface Model {
     waist?: string;
     hips?: string;
     shoe_size?: string;
+    whatsapp_link?: string;
+    viber_link?: string;
     created_at: string;
 }
 

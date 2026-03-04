@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
                 {
                     ...modelData,
                     telegram_link: body.telegram_link,
+                    whatsapp_link: body.whatsapp_link,
+                    viber_link: body.viber_link,
                 },
             ])
             .select()

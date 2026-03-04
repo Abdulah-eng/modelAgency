@@ -26,6 +26,8 @@ export default function NewModelPage() {
     const [coverFile, setCoverFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
     const [telegram, setTelegram] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
+    const [viber, setViber] = useState('');
     const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
     const router = useRouter();
 
@@ -54,6 +56,8 @@ export default function NewModelPage() {
                 skills: skills.filter(s => s.label.trim()),
                 cover_photo: photoUrl,
                 telegram_link: telegram,
+                whatsapp_link: whatsapp,
+                viber_link: viber,
                 gallery: galleryUrls,
             };
 
@@ -99,7 +103,7 @@ export default function NewModelPage() {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                 <div className="form-group">
                                     <label className="form-label">Age *</label>
-                                    <input type="number" className="form-input" value={age} onChange={e => setAge(e.target.value)} required min="16" />
+                                    <input type="number" className="form-input" value={age} onChange={e => setAge(e.target.value)} required min="0" />
                                 </div>
                             </div>
                             <div className="form-group">
@@ -110,6 +114,16 @@ export default function NewModelPage() {
                                 <div className="form-group">
                                     <label className="form-label">Telegram Link</label>
                                     <input className="form-input" value={telegram} onChange={e => setTelegram(e.target.value)} placeholder="https://t.me/…" />
+                                </div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <label className="form-label">WhatsApp Link / Number</label>
+                                    <input className="form-input" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="https://wa.me/…" />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Viber Link / Number</label>
+                                    <input className="form-input" value={viber} onChange={e => setViber(e.target.value)} placeholder="viber://chat?number=…" />
                                 </div>
                             </div>
                             <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

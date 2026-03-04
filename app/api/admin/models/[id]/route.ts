@@ -15,6 +15,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             .update({
                 ...modelData,
                 telegram_link: body.telegram_link,
+                whatsapp_link: body.whatsapp_link,
+                viber_link: body.viber_link,
             })
             .eq('id', params.id)
             .select()
