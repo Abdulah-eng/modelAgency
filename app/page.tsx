@@ -48,7 +48,7 @@ export default async function HomePage() {
                     <span className="video-hero-eyebrow">Welcome to</span>
                     <h1 className="video-hero-title">{settings?.site_name || 'Elara Models'}</h1>
                     <p className="video-hero-subtitle">
-                        {settings?.hero_video_subtitle || settings?.about_text?.slice(0, 120) || 'A curated selection of professional models for fashion, editorial, and commercial projects.'}
+                        {settings?.hero_video_subtitle || settings?.about_text || 'A curated selection of professional models for fashion, editorial, and commercial projects.'}
                     </p>
                     <div className="video-hero-actions" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
                         <a href="#models" className="video-hero-cta">Browse Models</a>
