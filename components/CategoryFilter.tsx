@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { Model } from '@/types';
-import AutoScrollRow from './AutoScrollRow';
+import ModelGrid from './ModelGrid';
 import { parseCategories } from '@/lib/categories';
 
 export default function CategoryFilter({ models }: { models: Model[] }) {
@@ -20,9 +20,9 @@ export default function CategoryFilter({ models }: { models: Model[] }) {
             : models.filter((m) => parseCategories(m.category).includes(active));
 
     return (
-        <>
+        <div className="models-listing-container">
             {/* Category tabs */}
-            <div className="categories-section" id="models">
+            <div className="categories-section">
                 {availableCategories.map((cat) => (
                     <button
                         key={cat}
@@ -34,16 +34,10 @@ export default function CategoryFilter({ models }: { models: Model[] }) {
                 ))}
             </div>
 
-            {/* Model carousel */}
-            <div style={{ padding: '3rem 0 4rem' }}>
-                {filtered.length === 0 ? (
-                    <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                        No models in this category yet.
-                    </p>
-                ) : (
-                    <AutoScrollRow models={filtered} />
-                )}
+            {/* Model Grid */}
+            <div className="models-grid-container">
+                <ModelGrid models={filtered} />
             </div>
-        </>
+        </div>
     );
 }

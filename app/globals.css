@@ -2318,3 +2318,54 @@ a.contact-detail-value:hover {
     border-top: 1px solid var(--border);
   }
 }
+/* ============================================================
+   MODEL GRID (ALBUM STYLE)
+   ============================================================ */
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 0 15px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .models-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .models-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1440px) {
+  .models-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px;
+  }
+}
+
+.models-grid-item {
+  width: 100%;
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.models-grid-container {
+  padding: 4rem 0 6rem;
+  background: var(--black);
+}
+
+.models-listing-container {
+  scroll-margin-top: 80px;
+}
