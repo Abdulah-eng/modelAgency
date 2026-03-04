@@ -55,7 +55,15 @@ export default async function AdminModelsPage() {
                                 <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{model.name}</td>
                                 <td>{model.age}</td>
                                 <td>
-                                    <span className="badge badge-gold">{model.category}</span>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                        {Array.isArray(model.category) ? (
+                                            model.category.map((cat, i) => (
+                                                <span key={i} className="badge badge-gold">{cat}</span>
+                                            ))
+                                        ) : (
+                                            <span className="badge badge-gold">{model.category}</span>
+                                        )}
+                                    </div>
                                 </td>
                                 <td>{model.height || '—'}</td>
                                 <td>

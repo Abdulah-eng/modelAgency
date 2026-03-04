@@ -106,7 +106,7 @@ export default async function ModelPage({ params }: Props) {
                     <div style={{ padding: '1rem 0 0' }}>
                         <Link href="/" className="back-btn">← Back</Link>
                     </div>
-                    <p className="mdp-category">{Array.isArray(model.category) ? model.category.join(' • ') : model.category}</p>
+                    <p className="mdp-category">{Array.isArray(model.category) ? model.category.filter(Boolean).join(' • ') : model.category}</p>
                     <h2 className="mdp-name">{model.name}</h2>
                     {model.bio && <p className="mdp-bio">{model.bio}</p>}
 

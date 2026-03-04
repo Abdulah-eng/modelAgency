@@ -12,14 +12,20 @@ export default function CategoryFilter({ models }: { models: Model[] }) {
     // Get only categories that have models
     const availableCategories = [
         'All',
-        ...Array.from(new Set(models.flatMap((m) => (Array.isArray(m.category) ? m.category : []))))
+        ...Array.from(new Set(models.flatMap((m) => {
+            if (Array.isArray(m.category)) return m.category;
+            if (typeof m.category === 'string' && m.category) return [m.category];
+            return [];
+        })))
     ];
 
     const filtered =
         active === 'All'
             ? models
             : models.filter((m) =>
-                Array.isArray(m.category) ? m.category.includes(active) : m.category === active
+                Array.isArray(m.category)
+                    ? m.category.includes(active)
+                    : m.category === active
             );
 
     return (
