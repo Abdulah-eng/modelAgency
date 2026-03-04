@@ -51,7 +51,7 @@ export default function Footer({ siteName, facebookLink, twitterLink, instagramL
             <div className="site-footer-logo">
                 {logoUrl ? (
                     <div style={{ position: 'relative', height: '30px', width: '120px', margin: '0 auto' }}>
-                        <Image src={logoUrl} alt={name} fill style={{ objectFit: 'contain' }} />
+                        <Image src={logoUrl} alt={name} fill style={{ objectFit: 'contain' }} sizes="(max-width: 768px) 120px, 150px" />
                     </div>
                 ) : (
                     <><span>{firstLetter}</span>{rest}</>

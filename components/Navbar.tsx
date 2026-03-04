@@ -42,7 +42,7 @@ export default function Navbar({ siteName, phoneNumber, logoUrl }: { siteName?: 
                 <Link href="/" className="navbar-logo">
                     {logoUrl ? (
                         <div style={{ position: 'relative', height: '40px', width: '160px' }}>
-                            <Image src={logoUrl} alt={siteName || 'Logo'} fill style={{ objectFit: 'contain', objectPosition: 'left' }} />
+                            <Image src={logoUrl} alt={siteName || 'Logo'} fill style={{ objectFit: 'contain', objectPosition: 'left' }} sizes="(max-width: 768px) 160px, 200px" />
                         </div>
                     ) : (
                         <>

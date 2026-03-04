@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { Trash2, Plus } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { UploadBox, uploadViaApi, MultiUploadBox } from '@/app/admin/AdminUpload';
+import AdminReviewsSection from './AdminReviewsSection';
 import type { ModelPhoto } from '@/types';
 
 interface ModelRow {
@@ -226,6 +227,9 @@ export default function EditModelPage({ params }: { params: { id: string } }) {
                                 onUrls={setGalleryUrls}
                             />
                         </div>
+
+                        {/* Admin Reviews */}
+                        <AdminReviewsSection modelId={params.id} />
                     </div>
                 </div>
 

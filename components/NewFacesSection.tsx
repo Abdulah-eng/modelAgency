@@ -51,7 +51,7 @@ export default function NewFacesSection({
                         alt={featuredModel.name}
                         fill
                         style={{ objectFit: 'cover', objectPosition: 'top center' }}
-                        sizes="65vw"
+                        sizes="(max-width: 768px) 100vw, 65vw"
                         priority
                     />
                 ) : (
