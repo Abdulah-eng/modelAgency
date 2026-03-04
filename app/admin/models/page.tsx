@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import DeleteModelButton from './DeleteModelButton';
+import { parseCategories } from '@/lib/categories';
 import type { Model } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -56,13 +57,9 @@ export default async function AdminModelsPage() {
                                 <td>{model.age}</td>
                                 <td>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                                        {Array.isArray(model.category) ? (
-                                            model.category.map((cat, i) => (
-                                                <span key={i} className="badge badge-gold">{cat}</span>
-                                            ))
-                                        ) : (
-                                            <span className="badge badge-gold">{model.category}</span>
-                                        )}
+                                        {parseCategories(model.category).map((cat, i) => (
+                                            <span key={i} className="badge badge-gold">{cat}</span>
+                                        ))}
                                     </div>
                                 </td>
                                 <td>{model.height || '—'}</td>

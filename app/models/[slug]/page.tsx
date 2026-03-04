@@ -8,6 +8,7 @@ import ModelSocialContact from '@/components/ModelSocialContact';
 import AutoScrollRow from '@/components/AutoScrollRow';
 import ModelReviews from '@/components/ModelReviews';
 import Footer from '@/components/Footer';
+import { parseCategories } from '@/lib/categories';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -106,7 +107,7 @@ export default async function ModelPage({ params }: Props) {
                     <div style={{ padding: '1rem 0 0' }}>
                         <Link href="/" className="back-btn">← Back</Link>
                     </div>
-                    <p className="mdp-category">{Array.isArray(model.category) ? model.category.filter(Boolean).join(' • ') : model.category}</p>
+                    <p className="mdp-category">{parseCategories(model.category).join(' • ')}</p>
                     <h2 className="mdp-name">{model.name}</h2>
                     {model.bio && <p className="mdp-bio">{model.bio}</p>}
 

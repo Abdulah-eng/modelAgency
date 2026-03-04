@@ -1,3 +1,5 @@
+import { parseCategories } from '@/lib/categories';
+
 export default function ModelBanner({
     name,
     category,
@@ -32,7 +34,7 @@ export default function ModelBanner({
                     <span className="sep">/</span>
                     <a href="/#models">Our Models</a>
                     <span className="sep">/</span>
-                    <a href={`/#models`}>{Array.isArray(category) ? category.filter(Boolean).join(', ') : category}</a>
+                    <a href={`/#models`}>{parseCategories(category).join(', ')}</a>
                     <span className="sep">/</span>
                     <span className="current">{name}</span>
                 </nav>

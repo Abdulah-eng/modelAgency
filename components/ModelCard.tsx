@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Model } from '@/types';
+import { parseCategories } from '@/lib/categories';
 
 export default function ModelCard({ model }: { model: Model }) {
+    const categories = parseCategories(model.category);
     const stats = [
         { label: 'Age', value: model.age },
         { label: 'Height', value: model.height || '—' },
@@ -34,9 +36,7 @@ export default function ModelCard({ model }: { model: Model }) {
             {/* Always-visible name bar */}
             <div className="model-card-namebar">
                 <p className="model-card-cat">
-                    {Array.isArray(model.category)
-                        ? model.category.filter(Boolean).join(' • ')
-                        : model.category}
+                    {categories.join(' • ')}
                 </p>
                 <p className="model-card-name">{model.name}</p>
             </div>

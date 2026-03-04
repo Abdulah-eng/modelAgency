@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import type { Model } from '@/types';
 import AutoScrollRow from './AutoScrollRow';
-
-const ALL_CATEGORIES = ['All', 'Fashion', 'Commercial', 'Runway', 'Editorial', 'Fitness', 'Plus Size', 'Petite', 'Other'];
+import { parseCategories } from '@/lib/categories';
 
 export default function CategoryFilter({ models }: { models: Model[] }) {
     const [active, setActive] = useState('All');
@@ -12,21 +11,13 @@ export default function CategoryFilter({ models }: { models: Model[] }) {
     // Get only categories that have models
     const availableCategories = [
         'All',
-        ...Array.from(new Set(models.flatMap((m) => {
-            if (Array.isArray(m.category)) return m.category;
-            if (typeof m.category === 'string' && m.category) return [m.category];
-            return [];
-        })))
+        ...Array.from(new Set(models.flatMap((m) => parseCategories(m.category))))
     ];
 
     const filtered =
         active === 'All'
             ? models
-            : models.filter((m) =>
-                Array.isArray(m.category)
-                    ? m.category.includes(active)
-                    : m.category === active
-            );
+            : models.filter((m) => parseCategories(m.category).includes(active));
 
     return (
         <>
