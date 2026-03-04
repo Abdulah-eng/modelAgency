@@ -54,9 +54,29 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
     const result = await getModelData(params.slug);
     if (!result) return { title: 'Model Not Found' };
+
+    const siteTitle = result.settings?.site_name || 'Meraki Spa Manila';
+    const title = `${result.model.name} — ${siteTitle}`;
+    const description = result.model.bio || `View ${result.model.name}'s full profile and portfolio at ${siteTitle}.`;
+    const url = `https://merakispamanila.online/models/${params.slug}`;
+
     return {
-        title: `${result.model.name} — ${result.settings?.site_name || 'Elara Models'}`,
-        description: result.model.bio || `View ${result.model.name}'s full profile and portfolio.`,
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            url,
+            siteName: siteTitle,
+            images: result.model.cover_photo ? [{ url: result.model.cover_photo }] : [],
+            type: 'profile',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: result.model.cover_photo ? [result.model.cover_photo] : [],
+        },
     };
 }
 

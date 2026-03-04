@@ -8,9 +8,30 @@ export async function generateMetadata(): Promise<Metadata> {
     const supabase = createPublicSupabaseClient();
     const { data: settings } = await supabase.from('site_settings').select('site_name, site_favicon').limit(1).maybeSingle();
 
+    const baseUrl = 'https://merakispamanila.online';
+    const siteTitle = settings?.site_name ? `${settings.site_name} — Premium Model Agency` : 'Meraki Spa Manila — Premium Model Agency';
+    const siteDescription = 'A curated selection of professional models in Manila. Browse our portfolio and connect with premium talent for fashion, editorial, and commercial projects.';
+
     return {
-        title: settings?.site_name ? `${settings.site_name} — Premium Model Agency` : 'Elara Models — Premium Model Agency',
-        description: 'A curated selection of professional models. Browse our portfolio and connect with talent.',
+        title: siteTitle,
+        description: siteDescription,
+        keywords: ['Meraki Spa Manila', 'Spa Manila', 'Massage Manila', 'Luxury Spa Philippines', 'Best Manila Spa', 'Model Agency Manila', 'Elara Models'],
+        alternates: {
+            canonical: baseUrl,
+        },
+        openGraph: {
+            title: siteTitle,
+            description: siteDescription,
+            url: baseUrl,
+            siteName: settings?.site_name || 'Meraki Spa Manila',
+            locale: 'en_PH',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: siteTitle,
+            description: siteDescription,
+        },
         icons: {
             icon: settings?.site_favicon || '/favicon.ico',
         },
