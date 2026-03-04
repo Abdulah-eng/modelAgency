@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { User, Mail, Phone, MapPin, MessageSquare, MessageCircle } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function ContactFormSection({
     siteName,
@@ -21,14 +22,20 @@ export default function ContactFormSection({
     viberLink?: string;
 }) {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', city: '', message: '' });
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!turnstileToken) {
+            alert('Please complete the CAPTCHA');
+            return;
+        }
+
         // 1. Save to Database
         try {
-            await fetch('/api/admin/enquiries', {
+            const res = await fetch('/api/admin/enquiries', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -37,10 +44,18 @@ export default function ContactFormSection({
                     phone: formData.phone,
                     message: formData.message,
                     enquiry_type: 'general',
+                    turnstileToken: turnstileToken,
                 }),
             });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to save enquiry');
+            }
         } catch (err) {
             console.error('Failed to save enquiry to DB:', err);
+            // Optionally show error to user
+            return;
         }
 
         // 2. Open Email Client
@@ -54,6 +69,7 @@ export default function ContactFormSection({
         }
         setSubmitted(true);
         setFormData({ name: '', email: '', phone: '', city: '', message: '' });
+        setTurnstileToken(null);
         setTimeout(() => setSubmitted(false), 6000);
     };
 
@@ -166,6 +182,19 @@ export default function ContactFormSection({
                                 onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
                                 rows={4}
                             />
+                        </div>
+                        <div style={{ marginTop: '1rem' }}>
+                            {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                                <Turnstile
+                                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                                    onSuccess={(token) => setTurnstileToken(token)}
+                                    onExpire={() => setTurnstileToken(null)}
+                                    onError={() => setTurnstileToken(null)}
+                                    options={{ theme: 'dark' }}
+                                />
+                            ) : (
+                                <p style={{ color: '#e74c3c', fontSize: '0.8rem' }}>CAPTCHA Site Key missing in .env.local</p>
+                            )}
                         </div>
                         <button type="submit" className="contact-submit-btn">
                             Send Message

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Star, User, MessageSquare, LogIn, Camera, X, ImageIcon, Trash2 } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,6 +22,7 @@ export default function ModelReviews({ modelId, modelName }: ModelReviewsProps) 
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     const [comment, setComment] = useState('');
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [screenshots, setScreenshots] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -120,6 +122,11 @@ export default function ModelReviews({ modelId, modelName }: ModelReviewsProps) 
             return;
         }
 
+        if (!turnstileToken) {
+            toast.error('Please complete the CAPTCHA');
+            return;
+        }
+
         setSubmitting(true);
         try {
             let uploadedUrls: string[] = [];
@@ -136,7 +143,8 @@ export default function ModelReviews({ modelId, modelName }: ModelReviewsProps) 
                     model_id: modelId,
                     rating,
                     comment,
-                    screenshots: uploadedUrls
+                    screenshots: uploadedUrls,
+                    turnstileToken,
                 }),
             });
 
@@ -278,6 +286,19 @@ export default function ModelReviews({ modelId, modelName }: ModelReviewsProps) 
                                     />
                                 </div>
 
+                                <div className="review-captcha" style={{ marginTop: '1.5rem' }}>
+                                    {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                                        <Turnstile
+                                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                                            onSuccess={(token) => setTurnstileToken(token)}
+                                            onExpire={() => setTurnstileToken(null)}
+                                            onError={() => setTurnstileToken(null)}
+                                            options={{ theme: 'dark' }}
+                                        />
+                                    ) : (
+                                        <p style={{ color: '#e74c3c', fontSize: '0.8rem' }}>CAPTCHA Site Key missing</p>
+                                    )}
+                                </div>
                                 <button type="submit" className="btn btn-primary" disabled={submitting || uploading} style={{ marginTop: '1.5rem', width: '100%' }}>
                                     {submitting ? (uploading ? 'Uploading Images...' : 'Submitting...') : 'Post Review'}
                                 </button>

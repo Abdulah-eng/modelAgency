@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 export async function POST(req: NextRequest) {
     const supabase = createServerSupabaseClient();
@@ -11,7 +12,16 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { model_id, rating, comment, screenshots } = await req.json();
+        const { model_id, rating, comment, screenshots, turnstileToken } = await req.json();
+
+        if (!turnstileToken) {
+            return NextResponse.json({ error: 'CAPTCHA token is missing.' }, { status: 400 });
+        }
+
+        const isValid = await verifyTurnstileToken(turnstileToken);
+        if (!isValid) {
+            return NextResponse.json({ error: 'CAPTCHA verification failed.' }, { status: 400 });
+        }
 
         // Validation
         if (!model_id) return NextResponse.json({ error: 'Model ID is required.' }, { status: 400 });

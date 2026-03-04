@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase-server';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,17 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
+        const { turnstileToken } = body;
+
+        if (!turnstileToken) {
+            return NextResponse.json({ error: 'CAPTCHA token is missing.' }, { status: 400 });
+        }
+
+        const isValid = await verifyTurnstileToken(turnstileToken);
+        if (!isValid) {
+            return NextResponse.json({ error: 'CAPTCHA verification failed.' }, { status: 400 });
+        }
+
         const supabase = createServiceRoleClient();
 
         const { data, error } = await supabase
