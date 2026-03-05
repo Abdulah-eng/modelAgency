@@ -81,6 +81,11 @@ export default async function HomePage() {
                 </div>
             </section>
 
+            {/* ── NEW FACES (FEATURED) ── */}
+            {models.length > 0 && (
+                <NewFacesSection models={models.slice(0, 6)} siteName={settings?.site_name} />
+            )}
+
             {/* ── CATEGORIES + MODEL CAROUSEL ── */}
             <main id="models">
                 {models.length > 0 ? (
@@ -91,11 +96,6 @@ export default async function HomePage() {
                     </div>
                 )}
             </main>
-
-            {/* ── NEW FACES ── */}
-            {models.length > 0 && (
-                <NewFacesSection models={models.slice(0, 6)} siteName={settings?.site_name} />
-            )}
 
             {/* ── TESTIMONIALS ── */}
             {testimonials.length > 0 && (
