@@ -18,7 +18,7 @@ export default function NewFacesSection({
             <div className="new-faces-left">
                 <div className="new-faces-heading">
                     <span className="new-faces-agency">{siteName || 'Agency'}</span>
-                    <h2 className="new-faces-title">New Faces</h2>
+                    <h2 className="new-faces-title">Most Featured</h2>
                 </div>
                 <ul className="new-faces-list">
                     {listModels.map((model, i) => (
