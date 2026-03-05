@@ -18,8 +18,7 @@ export default function ModelSocialContact({ telegram, whatsapp, viber, name }: 
 
     return (
         <div className="model-social-panel">
-            <h3 className="social-title">Contact {name.split(' ')[0]}</h3>
-            <p className="social-subtitle">Connect with this model directly for bookings and inquiries.</p>
+            <h3 className="social-title">Contact with us</h3>
 
             <div className="social-buttons-grid">
                 {telegramLink && (

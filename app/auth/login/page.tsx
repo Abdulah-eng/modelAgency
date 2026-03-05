@@ -24,7 +24,11 @@ function LoginForm() {
             toast.error(error.message);
         } else {
             toast.success('Welcome back!');
-            router.push(redirectTo);
+            if (email.toLowerCase() === 'admin@model.com') {
+                router.push('/admin');
+            } else {
+                router.push(redirectTo);
+            }
             router.refresh();
         }
         setLoading(false);

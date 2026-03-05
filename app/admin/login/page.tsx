@@ -20,7 +20,11 @@ export default function AdminLoginPage() {
             toast.error(error.message);
         } else {
             toast.success('Welcome back!');
-            router.push('/admin');
+            if (email.toLowerCase() === 'admin@model.com') {
+                router.push('/admin');
+            } else {
+                router.push('/');
+            }
             router.refresh();
         }
         setLoading(false);
