@@ -16,7 +16,7 @@ export default function CategoryFilter({ models }: { models: Model[] }) {
 
     const filtered =
         active === 'All'
-            ? models
+            ? [...models].sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
             : models.filter((m) => parseCategories(m.category).includes(active));
 
     return (

@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import Navbar from '@/components/Navbar';
 import CategoryFilter from '@/components/CategoryFilter';
-import NewFacesSection from '@/components/NewFacesSection';
+import FeaturedSlider from '@/components/FeaturedSlider';
 import TestimonialsSection, { type Testimonial } from '@/components/TestimonialsSection';
 import BecomeModelSection from '@/components/BecomeModelSection';
 import CastingSection from '@/components/CastingSection';
@@ -28,6 +28,7 @@ async function getPageData() {
 
 export default async function HomePage() {
     const { settings, models, testimonials } = await getPageData();
+    const featuredModels = models.filter((m) => m.is_featured);
 
     return (
         <>
@@ -81,9 +82,9 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* ── NEW FACES (FEATURED) ── */}
-            {models.length > 0 && (
-                <NewFacesSection models={models.slice(0, 6)} siteName={settings?.site_name} />
+            {/* ── MOST FEATURED (SLIDER) ── */}
+            {featuredModels.length > 0 && (
+                <FeaturedSlider models={featuredModels} siteName={settings?.site_name} />
             )}
 
             {/* ── CATEGORIES + MODEL CAROUSEL ── */}
