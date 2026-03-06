@@ -93,22 +93,14 @@ export default function FeaturedSlider({
                     gap: 1.5rem;
                     overflow-x: auto;
                     scroll-snap-type: x mandatory;
-                    padding-bottom: 1.5rem; /* Space for scrollbar */
+                    padding-bottom: 1rem;
                     -webkit-overflow-scrolling: touch;
-                    scrollbar-width: thin;
-                    scrollbar-color: var(--accent) rgba(255,255,255,0.05);
+                    scrollbar-width: none; /* Firefox */
+                    -ms-overflow-style: none; /* IE/Edge */
                 }
                 
                 .featured-slider-track::-webkit-scrollbar {
-                    height: 6px;
-                }
-                .featured-slider-track::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-radius: 10px;
-                }
-                .featured-slider-track::-webkit-scrollbar-thumb {
-                    background: var(--accent);
-                    border-radius: 10px;
+                    display: none; /* Chrome/Safari */
                 }
 
                 .featured-slider-item {
