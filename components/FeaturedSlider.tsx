@@ -11,17 +11,44 @@ export default function FeaturedSlider({
     models: Model[];
     siteName?: string;
 }) {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [isHovered, setIsHovered] = useState(false);
+
+    useEffect(() => {
+        if (isHovered || models.length <= 3) return; // Only scroll if needed and not hovered
+
+        const interval = setInterval(() => {
+            if (scrollRef.current) {
+                const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+
+                if (scrollLeft + clientWidth >= scrollWidth - 10) {
+                    scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    const itemWidth = scrollRef.current.firstElementChild?.clientWidth || 300;
+                    const gap = 24; // 1.5rem gap
+                    scrollRef.current.scrollTo({ left: scrollLeft + itemWidth + gap, behavior: 'smooth' });
+                }
+            }
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [isHovered, models.length]);
+
     if (models.length === 0) return null;
 
     return (
-        <section className="featured-slider-section">
+        <section
+            className="featured-slider-section"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
             <div className="featured-slider-heading">
                 <span className="featured-slider-agency">{siteName || 'Agency'}</span>
                 <h2 className="featured-slider-title">Most Featured</h2>
             </div>
 
             <div className="featured-slider-container">
-                <div className="featured-slider-track">
+                <div className="featured-slider-track" ref={scrollRef}>
                     {models.map((model) => (
                         <div key={model.id} className="featured-slider-item">
                             <ModelCard model={model} />
